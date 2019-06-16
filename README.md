@@ -18,7 +18,10 @@ cd ../fullAna
 python create_script.py 2017
 python runNoReco.py
 cd doNoReco
-python ../ratioPlot.py
+mv hist*.root 2017
+cd 2017
+python ../../ratioPlot.py
+#../../../plotIt/plotIt -o figures/ ../../../plotIt/configs/config_2017.yml #histos_control.yml
 ```
   *Reconstruction
 This is for ST FCNC reconstruction using Keras+TF. For TT FCNC, some options in flat ntuplizer must be changes (eg. event selection, b tagging requirements). The flat ntuples for jer assignment is stored in both root and hdf format. root output is kept for BDT test. Default training code uses 0th ST Hct ntuple with classifier version '01'. score and assign folders will be made automatically.
@@ -29,9 +32,11 @@ python dir_manage.py #make directories
 source compile.sh
 source job_ntuple.sh
 python dir_manage.py #check number of generated files
+
 #Launch training
 cd ../training
 python training_kerasTF.py STFCNC 01 2017
+
 #With classifier, run prediction. In evlauation, you can assign sytematic from 0 to 6
 cd ..
 python select_model.py STFCNC 01 2017
@@ -41,6 +46,7 @@ python evaluation_kerasTF.py STFCNC 01 2017 True 1 model.h5
 cat ../commonTools/file_2017_top.txt | xargs -i -P1 -n2 python combi_assign.py STFCNC 01 2017 True #for signal efficiency
 cat ../commonTools/file_2017_all.txt | xargs -i -P$(nproc) -n2 python combi_assign.py STFCNC 01 2017 False
 #cat ../commonTools/file_2017_all.txt | xargs -i -P$(nproc) -n2 python nohup combi_assign.py STFCNC 01 2017 False > log &
+
 #Plot histograms with reconstruction
 cd ../fullAna/
 source compile.sh
@@ -51,10 +57,11 @@ source job_merge.sh
 python do_post_process.py
 mkdir STFCNC01
 mkdir figures
-mv post_process pre_process temp 2017STFCNC01
+mv post_process pre_process temp STFCNC01
+mv STFCNC01 2017
 #python ratioEMuCombine.py
-cd STFCNC01/post_process
-../../../../plotIt/plotIt -o ../figures/ ../../../../plotIt/configs/config.yml -y
+cd 2017/STFCNC01/post_process
+../../../../../plotIt/plotIt -o ../figures/ ../../../../../plotIt/configs/config_2017.yml -y
 ```
   *Final MVA
 ```{.Bash}
@@ -66,16 +73,19 @@ cd ../training
 python training_kerasTF.py Hct j3b3 01 2017
 cd ..
 python evaluation_kerasTF.py Hct j3b3 01 2017 0 model.h5
-cat ../commonTools/file_2017_all.txt | xargs -i -P$(nproc) -n2 python run.py Hct_j3b2_01 2017
+
+#Histogram
+source all_histo.sh
+#cat ../commonTools/file_2017_all.txt | xargs -i -P$(nproc) -n2 python run.py Hct_j3b2_01 2017
 #cat ../commonTools/file_2017_all.txt | xargs -i -P$(nproc) -n2 nohup python run.py Hct_j3b2_01 2017 > log &
-cd histos
-source job_merge.sh
-python do_post_process.py
-mkdir Hct_j4_01
-mv post_process pre_process temp Hct_j3b2_01
+#cd histos
+#source job_merge.sh
+#python do_post_process.py
+#mkdir Hct_j4_01
+#mv post_process pre_process temp Hct_j3b2_01
 ...
-python merge_histos.py Hct 01 2017 01 01 01 01 01
-../../../../plotIt/plotIt -o ../ ../../../../plotIt/configs/config.yml -y
+python merge_histos.py Hct 2017 01 01 01 01 01 01
+../../../../../../plotIt/plotIt -o ../ ../../../../../../plotIt/configs/config_2017.yml -y
 ```
 If you use BDT,
 ```{.Bash}
