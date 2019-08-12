@@ -75,7 +75,7 @@ void MyAnalysis::SlaveBegin(TTree * /*tree*/)
 
   //cout << "SlaveBegin" << endl;
   for( int ich=0; ich < 3; ich++ ){
-    for( int i=0; i < 12; i++ ){
+    for( int i=0; i < 9; i++ ){
       for( int syst = 0; syst != syst_num; ++syst ){
         if( syst > 0 and !dosyst ) continue;
 
@@ -136,7 +136,7 @@ void MyAnalysis::SlaveBegin(TTree * /*tree*/)
           fOutput->Add(h_LepEta[ich][i][syst]);
 
           h_WMass[ich][i][syst] = new TH1D(Form("h_WMass_Ch%i_S%i%s",ich,i,syst_name[syst]), "W Mass", 30 ,0 ,200);
-          h_WMass[ich][i][syst]->SetXTitle("Transverse Mass (GeV)");
+          h_WMass[ich][i][syst]->SetXTitle("W Transverse Mass (Lep) (GeV)");
           h_WMass[ich][i][syst]->Sumw2();
           fOutput->Add(h_WMass[ich][i][syst]);
 
@@ -198,7 +198,7 @@ void MyAnalysis::SlaveBegin(TTree * /*tree*/)
         fOutput->Add(h_cvsb[ich][i][syst]);
 
         h_FCNHkinLepWMass[ich][i][syst] = new TH1D(Form("h_FCNHkinLepWMass_Ch%i_S%i%s",ich,i,syst_name[syst]), "W Transverse Mass (Lep)", 30 , 0, 300);
-        h_FCNHkinLepWMass[ich][i][syst]->SetXTitle("W Mass (Lep) (GeV)");
+        h_FCNHkinLepWMass[ich][i][syst]->SetXTitle("W Transverse Mass (Lep) (GeV)");
         h_FCNHkinLepWMass[ich][i][syst]->Sumw2();
         fOutput->Add(h_FCNHkinLepWMass[ich][i][syst]);
 
@@ -217,8 +217,8 @@ void MyAnalysis::SlaveBegin(TTree * /*tree*/)
         h_FCNHkinDR[ich][i][syst]->Sumw2();
         fOutput->Add(h_FCNHkinDR[ich][i][syst]);
 
-        h_FCNHkinLepTopM[ich][i][syst] = new TH1D(Form("h_FCNHkinLepTopM_Ch%i_S%i%s",ich,i,syst_name[syst]), "Top Transverse Mass (Lep)", 30 , 50, 450);
-        h_FCNHkinLepTopM[ich][i][syst]->SetXTitle("Top Mass (Lep) (GeV)");
+        h_FCNHkinLepTopM[ich][i][syst] = new TH1D(Form("h_FCNHkinLepTopM_Ch%i_S%i%s",ich,i,syst_name[syst]), "Top Transverse Mass (Lep)", 30 , 0, 450);
+        h_FCNHkinLepTopM[ich][i][syst]->SetXTitle("Top Transverse Mass (Lep) (GeV)");
         h_FCNHkinLepTopM[ich][i][syst]->Sumw2();
         fOutput->Add(h_FCNHkinLepTopM[ich][i][syst]);
 
@@ -306,8 +306,8 @@ Bool_t MyAnalysis::Process(Long64_t entry)
 
   int era = 0;
   TString current_file_name = MyAnalysis::fReader.GetTree()->GetCurrentFile()->GetName();
-  if     ( current_file_name.Contains("2017") ) era = 2017;
-  else if( current_file_name.Contains("2018") ) era = 2018;
+  if     ( current_file_name.Contains("V9") ) era = 2017;
+  else if( current_file_name.Contains("V10") ) era = 2018;
   //cout << era;
 
   int mode = 999; 
@@ -368,7 +368,8 @@ Bool_t MyAnalysis::Process(Long64_t entry)
   p4met.SetPxPyPzE( met_x, met_y, 0, met);
 
   TLorentzVector lepton;
-  lepton.SetPtEtaPhiE(*lepton_pt*lepton_scale[0], *lepton_eta, *lepton_phi, *lepton_e);
+  lepton.SetPtEtaPhiE(*lepton_pt, *lepton_eta, *lepton_phi, *lepton_e);
+  lepton = lepton*lepton_scale[0];
 
   float transverseM = transverseMass(lepton, p4met);
   float lepDphi = lepton.DeltaPhi(p4met);
@@ -517,7 +518,7 @@ Bool_t MyAnalysis::Process(Long64_t entry)
   }//reco option
 
   /////Fill histograms
-  int Ncuts = 12;
+  int Ncuts = 9;
   bool eventSelection[Ncuts];
   for(int bcut=0; bcut < Ncuts; bcut++) eventSelection[bcut] = false;
 
@@ -530,16 +531,13 @@ Bool_t MyAnalysis::Process(Long64_t entry)
   eventSelection[6]  = ( njets >= 4 ) && ( nbjets_m == 2 ); 
   eventSelection[7]  = ( njets >= 4 ) && ( nbjets_m == 3 );
   eventSelection[8]  = ( njets >= 4 ) && ( nbjets_m == 4 );
-  eventSelection[9]  = ( njets >= 4 ) && ( nbjets_m >= 2 );
-  eventSelection[10] = ( njets >= 4 ) && ( nbjets_m >= 3 );
-  eventSelection[11] = ( njets >= 4 ) && ( nbjets_m >= 4 );
 
   if( reco_id > 0 ) for( int i=0; i <5; i++) eventSelection[i] = false;
 
   int modeArray[2] = {mode, 2};
 
   for( int MODE : modeArray ){
-    for( int cut = 0; cut < 12; cut++){
+    for( int cut = 0; cut < 9; cut++){
       if( eventSelection[cut] ){
         for( int syst = 0; syst != syst_num; ++syst ){
           if( syst > 0 and !dosyst ) continue;

@@ -55,13 +55,15 @@ source compile.sh
 cat ../commonTools/file_2017_all.txt | xargs -i -P$(nproc) -n2 python runReco.py STFCNC01 2017
 #cat ../commonTools/file_2017_all.txt | xargs -i -P$(nproc) -n2 nohup python runReco.py STFCNC01 2017 > log &
 cd doReco
-source job_merge.sh
+#source job_merge_2017.sh
+source job_prep_2017.sh
+cat job_hadd_2017.sh | xargs -i -P$(nporc) -n3 python multiHadd.py 
 python do_post_process.py
 mkdir STFCNC01
 mkdir figures
 mv post_process pre_process temp STFCNC01
 mv STFCNC01 2017
-#python ratioEMuCombine.py
+#python ratioPlot.py
 cd 2017/STFCNC01/post_process
 ../../../../../plotIt/plotIt -o ../figures/ ../../../../../plotIt/configs/config_2017.yml -y
 ```
@@ -87,7 +89,8 @@ source all_histo.sh
 #mv post_process pre_process temp Hct_j3b2_01
 ...
 python merge_histos.py Hct 2017 01 01 01 01 01 01
-../../../../../../plotIt/plotIt -o ../ ../../../../../../plotIt/configs/config_2017.yml -y
+../../../../../plotIt/plotIt -o ../prefit ../../../../../plotIt/configs/config_2017.yml -y
+python print_syst_table.py 2017 01 #Systematic table
 ```
 If you use BDT,
 ```{.Bash}

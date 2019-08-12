@@ -63,13 +63,13 @@ sig_files, bkg_files = train_files(ch, era)
 if not input_only:
   scaleST, scaleTT, scaleTTLJ, scaleTTLL, frac_sig, frac_bkg = evalScale(ch, era, sig_files, bkg_files)
 else: scaleST=1.0; scaleTT=1.0; scaleTTLJ=1.0; scaleTTLL=1.0; frac_sig=1.0; frac_bkg=1.0
-input_features.remove('STTT')
-input_features.remove('channel')
+#input_features.remove('STTT')
+#input_features.remove('channel')
 
 import tensorflow as tf
 from keras.backend.tensorflow_backend import set_session
 config = tf.ConfigProto()
-config.gpu_options.per_process_gpu_memory_fraction = 0.2
+config.gpu_options.per_process_gpu_memory_fraction = 0.1
 set_session(tf.Session(config=config))
 
 import keras
@@ -157,7 +157,7 @@ def correlations(data, name, **kwds):
 #####################
 def inputvars(sigdata, bkgdata, signame, bkgname, **kwds):
     print('Plotting input variables')
-    bins = 40
+    bins = 20
     for colname in sigdata:
       dataset = [sigdata, bkgdata]
       low = min(np.min(d[colname].values) for d in dataset)
