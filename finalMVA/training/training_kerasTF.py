@@ -15,7 +15,7 @@ from sklearn.metrics import f1_score, precision_score, recall_score
 import numpy as np
 from root_numpy import array2tree, tree2array
 from variables import input_variables, train_files, evalScale
-from variables import input_variables_bdt
+from variables import input_variables_bdt, input_selected_bdt
 
 #Version of classifier
 if len(sys.argv) < 5:
@@ -28,14 +28,15 @@ era = sys.argv[4]
 
 #Options
 input_only = True
-multiGPU = True
-if os.environ["CUDA_VISIBLE_DEVICES"] in ["0", "1","2","3"]:
-  multiGPU = False
+#multiGPU = True
+#if os.environ["CUDA_VISIBLE_DEVICES"] in ["0", "1","2","3"]:
+#  multiGPU = False
 bkg_drop_rate = 0.0
 train_test_rate = 0.8
 plot_figures = True
 include_eventWeight = True
 sklearn_based_overtraining_check = False #If it set to false, directly plot DNN scores
+all_features = True
 
 #directory name
 configDir = '../'
@@ -56,9 +57,12 @@ if len(jetcat) > 3:
 else: nbjets_cut = 0
 
 input_features = []
-input_features.extend(input_variables(jetcat))
-#input_features.extend(input_variables_bdt(jetcat))
+if all_features: input_features.extend(input_variables(jetcat))
+else:
+  try: input_features.extend(input_selected_bdt(ch, jetcat, era))
+  except: input_features.extend(input_variables(jetcat))
 input_features.append(label_name)
+
 sig_files, bkg_files = train_files(ch, era)
 if not input_only:
   scaleST, scaleTT, scaleTTLJ, scaleTTLL, frac_sig, frac_bkg = evalScale(ch, era, sig_files, bkg_files)
@@ -489,75 +493,75 @@ a = 300
 b = 0.2
 init = 'glorot_uniform'
 
-with tf.device("/cpu:0"):
-  inputs = Input(shape=(data.shape[1],))
-  x = Dense(a, kernel_regularizer=l2(1E-2))(inputs)
-  x = BatchNormalization()(x)
+inputs = Input(shape=(data.shape[1],))
+x = Dense(a, kernel_regularizer=l2(1E-2))(inputs)
+x = BatchNormalization()(x)
 
-  branch_point1 = Dense(a, name='branch_point1')(x)
+branch_point1 = Dense(a, name='branch_point1')(x)
 
-  x = Dense(a, activation='relu', kernel_initializer=init, bias_initializer='zeros')(x)
-  x = Dropout(b)(x)
+x = Dense(a, activation='relu', kernel_initializer=init, bias_initializer='zeros')(x)
+x = Dropout(b)(x)
 
-  x = BatchNormalization()(x)
-  x = Dense(a, activation='relu', kernel_initializer=init, bias_initializer='zeros')(x)
-  x = Dropout(b)(x)
+x = BatchNormalization()(x)
+x = Dense(a, activation='relu', kernel_initializer=init, bias_initializer='zeros')(x)
+x = Dropout(b)(x)
 
-  x = add([x, branch_point1])
+x = add([x, branch_point1])
 
-  x = BatchNormalization()(x)
-  branch_point2 = Dense(a, name='branch_point2')(x)
+x = BatchNormalization()(x)
+branch_point2 = Dense(a, name='branch_point2')(x)
 
-  x = Dense(a, activation='relu', kernel_initializer=init, bias_initializer='zeros')(x)
-  x = Dropout(b)(x)
-  x = BatchNormalization()(x)
-  x = Dense(a, activation='relu', kernel_initializer=init, bias_initializer='zeros')(x)
-  x = Dropout(b)(x)
+x = Dense(a, activation='relu', kernel_initializer=init, bias_initializer='zeros')(x)
+x = Dropout(b)(x)
+x = BatchNormalization()(x)
+x = Dense(a, activation='relu', kernel_initializer=init, bias_initializer='zeros')(x)
+x = Dropout(b)(x)
 
-  x = add([x, branch_point2])
+x = add([x, branch_point2])
 
-  x = BatchNormalization()(x)
-  branch_point3 = Dense(a, name='branch_point3')(x)
+x = BatchNormalization()(x)
+branch_point3 = Dense(a, name='branch_point3')(x)
 
-  x = Dense(a, activation='relu', kernel_initializer=init, bias_initializer='zeros')(x)
-  x = Dropout(b)(x)
-  x = BatchNormalization()(x)
-  x = Dense(a, activation='relu', kernel_initializer=init, bias_initializer='zeros')(x)
-  x = Dropout(b)(x)
+x = Dense(a, activation='relu', kernel_initializer=init, bias_initializer='zeros')(x)
+x = Dropout(b)(x)
+x = BatchNormalization()(x)
+x = Dense(a, activation='relu', kernel_initializer=init, bias_initializer='zeros')(x)
+x = Dropout(b)(x)
 
-  x = add([x, branch_point3])
+x = add([x, branch_point3])
 
-  x = BatchNormalization()(x)
-  branch_point4 = Dense(a, name='branch_point4')(x)
+x = BatchNormalization()(x)
+branch_point4 = Dense(a, name='branch_point4')(x)
 
-  x = Dense(a, activation='relu', kernel_initializer=init, bias_initializer='zeros')(x)
-  x = Dropout(b)(x)
-  x = BatchNormalization()(x)
-  x = Dense(a, activation='relu', kernel_initializer=init, bias_initializer='zeros')(x)
-  x = Dropout(b)(x)
+x = Dense(a, activation='relu', kernel_initializer=init, bias_initializer='zeros')(x)
+x = Dropout(b)(x)
+x = BatchNormalization()(x)
+x = Dense(a, activation='relu', kernel_initializer=init, bias_initializer='zeros')(x)
+x = Dropout(b)(x)
 
-  x = add([x, branch_point4])
+x = add([x, branch_point4])
 
-  x = BatchNormalization()(x)
-  branch_point5 = Dense(a, name='branch_point5')(x)
+x = BatchNormalization()(x)
+branch_point5 = Dense(a, name='branch_point5')(x)
 
-  x = Dense(a, activation='relu', kernel_initializer=init, bias_initializer='zeros')(x)
-  x = Dropout(b)(x)
-  x = BatchNormalization()(x)
-  x = Dense(a, activation='relu', kernel_initializer=init, bias_initializer='zeros')(x)
-  x = Dropout(b)(x)
+x = Dense(a, activation='relu', kernel_initializer=init, bias_initializer='zeros')(x)
+x = Dropout(b)(x)
+x = BatchNormalization()(x)
+x = Dense(a, activation='relu', kernel_initializer=init, bias_initializer='zeros')(x)
+x = Dropout(b)(x)
 
-  x = add([x, branch_point5])
+x = add([x, branch_point5])
 
-  x = BatchNormalization()(x)
-  x = Dense(a, activation='relu', kernel_initializer=init, bias_initializer='zeros')(x)
-  x = Dropout(b)(x)
+x = BatchNormalization()(x)
+x = Dense(a, activation='relu', kernel_initializer=init, bias_initializer='zeros')(x)
+x = Dropout(b)(x)
 
-  predictions = Dense(2, activation='softmax')(x)
-  model = Model(inputs=inputs, outputs=predictions)
+predictions = Dense(2, activation='softmax')(x)
+model = Model(inputs=inputs, outputs=predictions)
 
-if multiGPU: train_model = multi_gpu_model(model, gpus=2)
-else: train_model = model
+#if multiGPU: train_model = multi_gpu_model(model, gpus=2)
+#else: train_model = model
+train_model = model
 
 train_model.compile(loss='binary_crossentropy', optimizer=Adam(lr=1E-3, beta_1=0.9, beta_2=0.999, epsilon=1e-8, decay=1E-3), metrics=['binary_accuracy'])
 #model.compile(loss='binary_crossentropy', optimizer=Adam(lr=1E-3, beta_1=0.9, beta_2=0.999, epsilon=1e-08, decay=1E-3), metrics=['binary_accuracy'])
