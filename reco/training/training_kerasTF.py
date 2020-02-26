@@ -120,8 +120,15 @@ def correlations(data, name, **kwds):
         # shift location of ticks to center of the bins
         ax.set_xticks(np.arange(len(labels))+0.5, minor=False)
         ax.set_yticks(np.arange(len(labels))+0.5, minor=False)
-        ax.set_xticklabels(labels, minor=False, ha='right', rotation=90)
-        ax.set_yticklabels(labels, minor=False)
+        if len(labels) < 50:
+          ax.set_xticklabels(labels, minor=False, ha='right', rotation=90)
+          ax.set_yticklabels(labels, minor=False)
+        elif len(labels) >= 50 and len(labels) < 100:
+          ax.set_xticklabels(labels, minor=False, ha='right', rotation=90, fontsize=4)
+          ax.set_yticklabels(labels, minor=False, fontsize=4)
+        else:
+          ax.set_xticklabels(labels, minor=False, ha='right', rotation=90, fontsize=2)
+          ax.set_yticklabels(labels, minor=False, fontsize=2)
 
     plt.tight_layout()
     #plt.show()
@@ -348,7 +355,6 @@ if plot_figures:
   correlations(data.loc[data[label_name] == 0].drop(label_name, axis=1), 'bkg')
   correlations(data.loc[data[label_name] == 1].drop(label_name, axis=1), 'sig')
   inputvars(data.loc[data[label_name] == 1].drop(label_name, axis=1), data.loc[data[label_name] == 0].drop(label_name, axis=1), 'sig', 'bkg')
-
 data = data.drop(label_name, axis=1) #then drop label
 
 
@@ -464,20 +470,21 @@ model = Model(inputs=inputs, outputs=predictions)
 
 #if multiGPU: train_model = multi_gpu_model(model, gpus=2)
 #else: train_model = model
-train_moel = model
+#train_moel = model
 
-train_model.compile(loss='binary_crossentropy', optimizer=Adam(lr=1E-3, beta_1=0.9, beta_2=0.999, epsilon=1e-8, decay=1E-3), metrics=['binary_accuracy'])
-#model.compile(loss='binary_crossentropy', optimizer=Adam(lr=1E-3, beta_1=0.9, beta_2=0.999, epsilon=1e-08, decay=1E-3), metrics=['binary_accuracy'])
+#train_model.compile(loss='binary_crossentropy', optimizer=Adam(lr=1E-3, beta_1=0.9, beta_2=0.999, epsilon=1e-8, decay=1E-3), metrics=['binary_accuracy'])
+model.compile(loss='binary_crossentropy', optimizer=Adam(lr=1E-3, beta_1=0.9, beta_2=0.999, epsilon=1e-08, decay=1E-3), metrics=['binary_accuracy'])
 #parallel_model.summary()
 
 modelfile = 'model_{epoch:02d}_{val_binary_accuracy:.4f}.h5'
 checkpoint = ModelCheckpoint(os.path.join(configDir, weightDir+ver, modelfile), monitor='val_binary_accuracy', verbose=1, save_best_only=False)#, mode='max')
-history = train_model.fit(X_train, Y_train,
-                          epochs=50, batch_size=1000,
-                          validation_data=(X_test, Y_test),
-                          #class_weight={ 0: 14, 1: 1 }, 
-                          callbacks=[roc_callback(training_data=(X_train, Y_train), validation_data=(X_test, Y_test), model=model)]
-                          )
+#history = train_model.fit(X_train, Y_train,
+history = model.fit(X_train, Y_train,
+                    epochs=50, batch_size=1000,
+                    validation_data=(X_test, Y_test),
+                    #class_weight={ 0: 14, 1: 1 }, 
+                    callbacks=[roc_callback(training_data=(X_train, Y_train), validation_data=(X_test, Y_test), model=model)]
+                    )
 model.save(os.path.join(configDir, weightDir+ver, 'model.h5'))#save template model, rather than the model returned by multi_gpu_model.
 
 print("Plotting scores")

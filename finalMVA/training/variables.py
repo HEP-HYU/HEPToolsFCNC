@@ -2,34 +2,34 @@ from ROOT import *
 import pandas as pd
 import os
 
-base_path17 = "/data/users/minerva1993/ntuple/V9_6/190702/production"
-base_path18 = "/data/users/minerva1993/ntuple/V10_2/190702/production"
+base_path17 = "/data/users/minerva1993/ntuple/V9_6/200101/production"
+base_path18 = "/data/users/minerva1993/ntuple/V10_3/200101/production"
 
 def input_selected_bdt(ch, jetcat, era): #Order Does Matter!!
 
   selected = {}
 
-  selected['Hct_j3b2_2017'] = ['stfcnc_jet0pt', 'stfcnc_jet0csv', 'stfcnc_jet2m', 'stfcnc_jet2csv', 'stfcnc_jet12pt', 'stfcnc_jet12m', 'stfcnc_lepTm', 'stfcnc_jet02dR', 'stfcnc_jet12_lepdR', 'stfcnc_jet12_0dR']
-  selected['Hct_j3b3_2017'] = ['stfcnc_jet0csv', 'stfcnc_jet1csv', 'stfcnc_jet2pt', 'stfcnc_jet2eta', 'stfcnc_jet2m', 'stfcnc_jet2csv', 'stfcnc_jet12m', 'stfcnc_lepTm', 'stfcnc_jet02dR', 'stfcnc_jet12_0dR']
-  selected['Hct_j4b2_2017'] = ['stfcnc_jet0csv', 'stfcnc_jet2csv', 'ttfcnc_jet0csv', 'ttfcnc_jet2csv', 'ttfcnc_jet3csv', 'ttbkg_jet1csv', 'ttbkg_jet2csv', 'ttbkg_jet12m', 'ttbkg_jet23m', 'ttbkg_hadTm']
+  selected['Hct_j3b2_2017'] = ['lepWm', 'stfcnc_jet0pt', 'stfcnc_jet0csv', 'stfcnc_jet2pt', 'stfcnc_jet2m', 'stfcnc_jet2csv', 'stfcnc_jet12m', 'stfcnc_lepTm', 'stfcnc_jet02dR', 'stfcnc_jet12_0dR']
+  selected['Hct_j3b3_2017'] = ['lepWm', 'stfcnc_jet0csv', 'stfcnc_jet1csv', 'stfcnc_jet2eta', 'stfcnc_jet2m', 'stfcnc_jet2csv', 'stfcnc_jet12m', 'stfcnc_lepTm', 'stfcnc_jet02dR', 'stfcnc_jet12_0dR']
+  selected['Hct_j4b2_2017'] = ['stfcnc_jet0csv', 'stfcnc_jet2csv', 'ttfcnc_jet0csv', 'ttfcnc_jet2csv', 'ttfcnc_jet3csv', 'ttbkg_jet1csv', 'ttbkg_jet2csv', 'ttbkg_jet12dR', 'ttbkg_jet12m', 'ttbkg_hadTm']
   selected['Hct_j4b3_2017'] = ['stfcnc_jet1csv', 'stfcnc_jet2csv', 'stfcnc_jet12m', 'ttfcnc_jet1csv', 'ttfcnc_jet2csv', 'ttfcnc_jet3csv', 'ttfcnc_jet12m', 'ttbkg_jet1csv', 'ttbkg_jet2csv', 'ttbkg_jet23m']
-  selected['Hct_j4b4_2017'] = ['ttfcnc_jet3csv', 'ttfcnc_jet12m', 'ttfcnc_hadTm', 'ttbkg_jet1csv', 'ttbkg_jet2csv']
-  selected['Hut_j3b2_2017'] = ['stfcnc_jet0pt', 'stfcnc_jet0m', 'stfcnc_jet0csv', 'stfcnc_jet2pt', 'stfcnc_jet2m', 'stfcnc_jet2csv', 'stfcnc_jet12pt', 'stfcnc_jet12m', 'stfcnc_jet02dR', 'stfcnc_jet12_0dR']
-  selected['Hut_j3b3_2017'] = ['stfcnc_jet0csv', 'stfcnc_jet1csv', 'stfcnc_jet2pt', 'stfcnc_jet2m', 'stfcnc_jet2csv', 'stfcnc_jet12pt', 'stfcnc_jet12m', 'stfcnc_lepTm', 'stfcnc_jet02dR', 'stfcnc_jet12_lepdR']
+  selected['Hct_j4b4_2017'] = ['ttfcnc_jet3csv', 'ttfcnc_jet12m', 'ttfcnc_hadTm', 'ttbkg_jet2csv', 'ttbkg_hadTm']
+  selected['Hut_j3b2_2017'] = ['lepWpt', 'lepWm', 'stfcnc_jet0pt', 'stfcnc_jet0m', 'stfcnc_jet0csv', 'stfcnc_jet2pt', 'stfcnc_jet2m', 'stfcnc_jet2csv', 'stfcnc_jet12pt', 'stfcnc_lepTpt']
+  selected['Hut_j3b3_2017'] = ['lepWm', 'stfcnc_jet0csv', 'stfcnc_jet1csv', 'stfcnc_jet2pt', 'stfcnc_jet2m', 'stfcnc_jet2csv', 'stfcnc_jet12pt', 'stfcnc_jet12m', 'stfcnc_lepTpt', 'stfcnc_lepTm']
   selected['Hut_j4b2_2017'] = ['stfcnc_jet0csv', 'stfcnc_jet2csv', 'ttfcnc_jet0csv', 'ttfcnc_jet2csv', 'ttfcnc_jet23m', 'ttbkg_jet1csv', 'ttbkg_jet12dR', 'ttbkg_jet12m', 'ttbkg_jet23m', 'ttbkg_hadTm']
-  selected['Hut_j4b3_2017'] = ['stfcnc_jet0csv', 'stfcnc_jet1csv', 'stfcnc_jet2csv', 'stfcnc_jet12m', 'ttfcnc_jet1csv', 'ttfcnc_jet2csv', 'ttfcnc_jet12m', 'ttbkg_jet1csv', 'ttbkg_jet23m', 'ttbkg_jet31m']
-  selected['Hut_j4b4_2017'] = ['stfcnc_jet1csv', 'stfcnc_jet2csv', 'ttfcnc_jet2csv', 'ttfcnc_jet12m', 'ttbkg_jet1csv']
+  selected['Hut_j4b3_2017'] = ['stfcnc_jet1csv', 'stfcnc_jet2csv', 'stfcnc_jet12m', 'ttfcnc_jet1csv', 'ttfcnc_jet2csv', 'ttfcnc_jet12m', 'ttfcnc_jet31m', 'ttbkg_jet1csv', 'ttbkg_jet23m', 'ttbkg_jet31m']
+  selected['Hut_j4b4_2017'] = ['stfcnc_jet1csv', 'stfcnc_jet2csv', 'stfcnc_jet01dR', 'ttfcnc_jet2csv', 'ttbkg_jet1csv']
 
-  selected['Hct_j3b2_2018'] = ['stfcnc_jet0pt', 'stfcnc_jet0csv', 'stfcnc_jet2m', 'stfcnc_jet2csv', 'stfcnc_jet12pt', 'stfcnc_jet12m', 'stfcnc_lepTm', 'stfcnc_jet02dR', 'stfcnc_jet12_lepdR', 'stfcnc_jet12_0dR']
-  selected['Hct_j3b3_2018'] = ['stfcnc_jet0csv', 'stfcnc_jet1eta', 'stfcnc_jet1csv', 'stfcnc_jet2pt', 'stfcnc_jet2eta', 'stfcnc_jet2m', 'stfcnc_jet2csv', 'stfcnc_jet12m', 'stfcnc_lepTm', 'stfcnc_jet12_0dR']
+  selected['Hct_j3b2_2018'] = ['lepWm', 'stfcnc_jet0pt', 'stfcnc_jet0csv', 'stfcnc_jet2m', 'stfcnc_jet2csv', 'stfcnc_jet12m', 'stfcnc_lepTm', 'stfcnc_jet02dR', 'stfcnc_jet12_lepdR', 'stfcnc_jet12_0dR']
+  selected['Hct_j3b3_2018'] = ['lepWpt', 'lepWm', 'stfcnc_jet0csv', 'stfcnc_jet1csv', 'stfcnc_jet2eta', 'stfcnc_jet2m', 'stfcnc_jet2csv', 'stfcnc_jet12m', 'stfcnc_lepTm', 'stfcnc_jet12_0dR']
   selected['Hct_j4b2_2018'] = ['stfcnc_jet0csv', 'stfcnc_jet2csv', 'ttfcnc_jet0csv', 'ttfcnc_jet2csv', 'ttfcnc_jet3csv', 'ttbkg_jet1csv', 'ttbkg_jet2csv', 'ttbkg_jet12m', 'ttbkg_jet23m', 'ttbkg_hadTm']
   selected['Hct_j4b3_2018'] = ['stfcnc_jet1csv', 'stfcnc_jet2csv', 'stfcnc_jet12m', 'ttfcnc_jet1csv', 'ttfcnc_jet2csv', 'ttfcnc_jet3csv', 'ttfcnc_jet12m', 'ttfcnc_hadTm', 'ttbkg_jet1csv', 'ttbkg_jet2csv']
   selected['Hct_j4b4_2018'] = ['ttfcnc_jet3csv', 'ttfcnc_jet12m', 'ttfcnc_hadTm', 'ttbkg_jet1csv', 'ttbkg_jet2csv']
-  selected['Hut_j3b2_2018'] = ['stfcnc_jet0pt', 'stfcnc_jet0m', 'stfcnc_jet0csv', 'stfcnc_jet2pt', 'stfcnc_jet2m', 'stfcnc_jet2csv', 'stfcnc_jet12pt', 'stfcnc_jet12m', 'stfcnc_jet02dR', 'stfcnc_jet12_lepdR']
-  selected['Hut_j3b3_2018'] = ['stfcnc_jet0csv', 'stfcnc_jet1m', 'stfcnc_jet1csv', 'stfcnc_jet2pt', 'stfcnc_jet2m', 'stfcnc_jet2csv', 'stfcnc_jet12pt', 'stfcnc_jet12dR', 'stfcnc_jet12m', 'stfcnc_lepTm']
+  selected['Hut_j3b2_2018'] = ['lepWpt', 'lepWm', 'stfcnc_jet0pt', 'stfcnc_jet0m', 'stfcnc_jet0csv', 'stfcnc_jet2pt', 'stfcnc_jet2m', 'stfcnc_jet2csv', 'stfcnc_jet12pt', 'stfcnc_lepTpt']
+  selected['Hut_j3b3_2018'] = ['lepWm', 'stfcnc_jet0csv', 'stfcnc_jet1csv', 'stfcnc_jet2pt', 'stfcnc_jet2m', 'stfcnc_jet2csv', 'stfcnc_jet12pt', 'stfcnc_jet12dR', 'stfcnc_jet12m', 'stfcnc_lepTm']
   selected['Hut_j4b2_2018'] = ['stfcnc_jet0csv', 'stfcnc_jet2csv', 'ttfcnc_jet0csv', 'ttfcnc_jet2csv', 'ttfcnc_jet23m', 'ttbkg_jet1csv', 'ttbkg_jet12dR', 'ttbkg_jet12m', 'ttbkg_jet23m', 'ttbkg_hadTm']
   selected['Hut_j4b3_2018'] = ['stfcnc_jet0csv', 'stfcnc_jet1csv', 'stfcnc_jet2csv', 'stfcnc_jet12m', 'ttfcnc_jet1csv', 'ttfcnc_jet2csv', 'ttfcnc_jet12m', 'ttbkg_jet1csv', 'ttbkg_jet23m', 'ttbkg_jet31m']
-  selected['Hut_j4b4_2018'] = ['stfcnc_jet2csv', 'ttfcnc_jet1csv', 'ttfcnc_jet2csv', 'ttfcnc_jet12m', 'ttbkg_jet1csv']
+  selected['Hut_j4b4_2018'] = ['stfcnc_jet1csv', 'stfcnc_jet2csv', 'ttfcnc_jet1csv', 'ttfcnc_jet2csv', 'ttbkg_jet1csv']
 
   var_list = selected[ch + '_' + jetcat + '_' + era]
 
@@ -40,19 +40,22 @@ def input_selected_bdt(ch, jetcat, era): #Order Does Matter!!
 def input_variables_bdt(jetcat): #Order Does Matter!!
  
   #var_list = ['STTT', 'channel', 'MET', 'lepDPhi', 'lepWpt', 'lepWm']
-  var_list = []
+  var_list = ['lepWpt', 'lepWdphi', 'lepWm',]
+  #var_list = []
 
+#  var_list.extend(['stfcnc_score'])
   var_list.extend(['stfcnc_jet0pt', 'stfcnc_jet0eta', 'stfcnc_jet0m', 'stfcnc_jet0csv',
                   'stfcnc_jet1pt', 'stfcnc_jet1eta', 'stfcnc_jet1m', 'stfcnc_jet1csv',
                   'stfcnc_jet2pt', 'stfcnc_jet2eta', 'stfcnc_jet2m', 'stfcnc_jet2csv',
                   'stfcnc_jet12pt', 'stfcnc_jet12eta', 'stfcnc_jet12deta',
                   'stfcnc_jet12dphi', 'stfcnc_jet12dR', 'stfcnc_jet12m',
-                  'stfcnc_lepTdphi', 'stfcnc_lepTm',
+                  'stfcnc_lepTpt', 'stfcnc_lepTdphi', 'stfcnc_lepTm',
                   'stfcnc_jet0lepdR', 'stfcnc_jet1lepdR', 'stfcnc_jet2lepdR',
                   'stfcnc_jet01dR', 'stfcnc_jet02dR',
                   'stfcnc_jet12_lepdR', 'stfcnc_jet12_0dR',
                   'stfcnc_lepTjet12dphi'])
   if "j4" in jetcat:
+#    var_list.extend(['ttfcnc_score'])
     var_list.extend(['ttfcnc_jet0pt', 'ttfcnc_jet0eta', 'ttfcnc_jet0m', 'ttfcnc_jet0csv',
                     'ttfcnc_jet1pt', 'ttfcnc_jet1eta', 'ttfcnc_jet1m',  'ttfcnc_jet1csv',
                     'ttfcnc_jet2pt', 'ttfcnc_jet2eta', 'ttfcnc_jet2m',  'ttfcnc_jet2csv',
@@ -67,12 +70,13 @@ def input_variables_bdt(jetcat): #Order Does Matter!!
                     'ttfcnc_hadTpt', 'ttfcnc_hadTeta',
                     'ttfcnc_hadT12_3deta', 'ttfcnc_hadT23_1deta', 'ttfcnc_hadT31_2deta',
                     'ttfcnc_hadT12_3dphi', 'ttfcnc_hadT23_1dphi', 'ttfcnc_hadT31_2dphi',
-                    'ttfcnc_hadT12_3dR', 'ttfcnc_hadT23_1dR', 'ttfcnc_hadT31_2dR','ttfcnc_hadTm',
+                    'ttfcnc_hadT12_3dR', 'ttfcnc_hadT23_1dR', 'ttfcnc_hadT31_2dR', 'ttfcnc_hadTm',
                     'ttfcnc_jet0lepdR', 'ttfcnc_jet1lepdR', 'ttfcnc_jet2lepdR', 'ttfcnc_jet3lepdR',
                     'ttfcnc_jet01dR', 'ttfcnc_jet02dR', 'ttfcnc_jet03dR',
                     'ttfcnc_jet12_lepdR', 'ttfcnc_jet23_lepdR', 'ttfcnc_jet31_lepdR',
                     'ttfcnc_jet12_0dR', 'ttfcnc_jet23_0dR', 'ttfcnc_jet31_0dR',
                     'ttfcnc_lepTjet12dphi', 'ttfcnc_lepTjet23dphi', 'ttfcnc_lepTjet31dphi', 'ttfcnc_hadT_jet0dR',])
+#    var_list.extend(['ttbkg_score'])
     var_list.extend(['ttbkg_jet0pt', 'ttbkg_jet0eta', 'ttbkg_jet0m', 'ttbkg_jet0csv',
                     'ttbkg_jet1pt', 'ttbkg_jet1eta', 'ttbkg_jet1m', 'ttbkg_jet1csv',
                     'ttbkg_jet2pt', 'ttbkg_jet2eta', 'ttbkg_jet2m', 'ttbkg_jet2csv',
@@ -84,10 +88,10 @@ def input_variables_bdt(jetcat): #Order Does Matter!!
                     'ttbkg_jet31pt', 'ttbkg_jet31eta', 'ttbkg_jet31deta',
                     'ttbkg_jet31dphi', 'ttbkg_jet31dR', 'ttbkg_jet31m',
                     'ttbkg_lepTpt', 'ttbkg_lepTdphi', 'ttbkg_lepTm',
-                    'ttbkg_hadTpt', 'ttbkg_hadTeta', 
+                    'ttbkg_hadTpt', 'ttbkg_hadTeta',
                     'ttbkg_hadT12_3deta', 'ttbkg_hadT23_1deta', 'ttbkg_hadT31_2deta',
                     'ttbkg_hadT12_3dphi', 'ttbkg_hadT23_1dphi', 'ttbkg_hadT31_2dphi',
-                    'ttbkg_hadT12_3dR', 'ttbkg_hadT23_1dR', 'ttbkg_hadT31_2dR','ttbkg_hadTm',
+                    'ttbkg_hadT12_3dR', 'ttbkg_hadT23_1dR', 'ttbkg_hadT31_2dR', 'ttbkg_hadTm',
                     'ttbkg_jet0lepdR', 'ttbkg_jet1lepdR', 'ttbkg_jet2lepdR', 'ttbkg_jet3lepdR',
                     'ttbkg_jet01dR', 'ttbkg_jet02dR', 'ttbkg_jet03dR',
                     'ttbkg_jet12_lepdR', 'ttbkg_jet23_lepdR', 'ttbkg_jet31_lepdR',
@@ -102,7 +106,9 @@ def input_variables_bdt(jetcat): #Order Does Matter!!
 def input_variables(jetcat):
  
   #var_list = ['STTT', 'channel', 'MET', 'lepDPhi', 'lepWpt', 'lepWm']
-  var_list = []
+  var_list = ['lepWpt', 'lepWdphi', 'lepWm',]
+  #'var_list' =' []
+  #var_list.extend(['stfcnc_score'])
 
   var_list.extend(['stfcnc_jet0pt', 'stfcnc_jet0eta', 'stfcnc_jet0m', 'stfcnc_jet0csv',
                   'stfcnc_jet1pt', 'stfcnc_jet1eta', 'stfcnc_jet1m', 'stfcnc_jet1csv',
@@ -115,6 +121,7 @@ def input_variables(jetcat):
                   'stfcnc_jet12_lepdR', 'stfcnc_jet12_0dR',
                   'stfcnc_lepTjet12dphi'])
   if "j4" in jetcat:
+#    var_list.extend(['ttfcnc_score', 'ttbkg_score'])
     var_list.extend(['ttfcnc_jet0pt', 'ttfcnc_jet0eta', 'ttfcnc_jet0m', 'ttfcnc_jet0csv',
                     'ttfcnc_jet1pt', 'ttfcnc_jet1eta', 'ttfcnc_jet1m', 'ttfcnc_jet1csv',
                     'ttfcnc_jet2pt', 'ttfcnc_jet2eta', 'ttfcnc_jet2m', 'ttfcnc_jet2csv',
@@ -321,10 +328,15 @@ def evalFrac(ch, era, sig, nj, nbj):
       TT += info_tmp.GetBinContent(2)
       ftmp.Close()
 
+  rootDir = '/data1/users/minerva1993/work/'
+  if   era == '2017': rootDir = rootDir + 'fcnc_RunII2017/finalMVA/current_ver/hdf_/'
+  elif era == '2018': rootDir = rootDir + 'fcnc_RunII2018/finalMVA/current_ver/hdf_/'
+
   nST, nTT = (0,0)
   #Signal first
   for files in sig:
-    data_temp = pd.read_hdf('./mkNtuple/' + era + '/hdf_/' + files)
+    #data_temp = pd.read_hdf('./mkNtuple/' + era + '/hdf_/' + files)
+    data_temp = pd.read_hdf(rootDir + files)
     data_temp = data_temp[data_temp['njets'] ==  nj]
     if nbj != 0:
       data_temp = data_temp[data_temp['nbjets_m'] == nbj]

@@ -20,18 +20,23 @@ nfeat = {'j3b2':10, 'j3b3':10, 'j4b2':10, 'j4b3':10, 'j4b4':5}
 print '####Extracting top N features for ' + ch + '_' + jetcat
 
 #Run training for check separation
-if do_recompute: proc = subprocess.Popen('python training_bdt.py ' + ch + ' ' + jetcat + ' 99 ' + era + ' True > ' + 'log_' + ch + '_' + jetcat + '_99 &', shell=True, preexec_fn=os.setsid)
+if do_recompute: proc = subprocess.Popen('python training_bdt.py ' + ch + ' ' + jetcat + ' ' + ver + ' '  + era + ' True > ' + 'log_' + ch + '_' + jetcat + '_99 &', shell=True, preexec_fn=os.setsid)
 
 #wait until log file created: for double check!!
 while True:
   if do_recompute:
     try:
-      log_file = open('./log_' + ch + '_' + jetcat + '_99', 'r')
+      log_file = open('./log_' + ch + '_' + jetcat + '_' + ver, 'r')
+      break
     except: continue
     else: break
   else:
-    log_file = open('Var_logs/' + era + '/log_' + ch + '_' + jetcat + '_99', 'r')
-    break
+    try:
+      log_file = open('Var_logs/' + era + '/log_' + ch + '_' + jetcat + '_' + ver, 'r')
+      break
+    except:
+      log_file = open('Var_logs/' + era + '/log_' + ch + '_' + jetcat, 'r')
+      break
 
 if do_recompute:
   while True:
@@ -47,8 +52,18 @@ rank_list = []
 num_evt = []
 
 #going to the first line of log file, check NEvents and ranking
-if do_recompute: log_file = open('./log_' + ch + '_' + jetcat + '_99', 'r')
-else: log_file = open('Var_logs/' + era + '/log_' + ch + '_' + jetcat + '_99', 'r')
+#if do_recompute: log_file = open('./log_' + ch + '_' + jetcat + '_' + ver, 'r')
+#else: log_file = open('Var_logs/' + era + '/log_' + ch + '_' + jetcat + '_' + ver, 'r')
+if do_recompute:
+  try:
+    log_file = open('./log_' + ch + '_' + jetcat + '_' + ver, 'r')
+  except: print "Wrong log file name for re-computation"
+else:
+  try:
+    log_file = open('Var_logs/' + era + '/log_' + ch + '_' + jetcat + '_' + ver, 'r')
+  except:
+    log_file = open('Var_logs/' + era + '/log_' + ch + '_' + jetcat, 'r')
+
 loglines = log_file.readlines()
 
 for line in loglines:
@@ -61,7 +76,7 @@ for line in loglines:
   if keep_line and line.count(':') == 3: rank_list.append(line.split(':')[2].strip())
 
 #Check number of events for training
-#print num_evt
+print num_evt
 print 'Signal * 0.8 =', str(int(round(int(num_evt[0]) * 0.8))) #Signal first in TMVA
 print 'Background * 0.8 =', str(int(round(int(num_evt[1]) * 0.8)))
 
@@ -77,7 +92,7 @@ for var in all_vars:
 
 print "  selected['" + ch + '_' + jetcat + '_' + era + "'] = " + str(sorted_rank_list)
 
-try:
+try: #only do for 99
   shutil.rmtree( os.path.join(era, 'final_' + ch + '_' + jetcat + '_99') )
   os.remove( os.path.join(era, 'output_' + ch + '_' + jetcat + '.root') )
 except: print "No folder or output file!"

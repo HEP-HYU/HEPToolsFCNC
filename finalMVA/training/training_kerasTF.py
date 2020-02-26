@@ -39,6 +39,9 @@ sklearn_based_overtraining_check = False #If it set to false, directly plot DNN 
 all_features = True
 
 #directory name
+rootDir = '/data1/users/minerva1993/work/'
+if   era == '2017': rootDir = rootDir + 'fcnc_RunII2017/finalMVA/current_ver/hdf_/'
+elif era == '2018': rootDir = rootDir + 'fcnc_RunII2018/finalMVA/current_ver/hdf_/'
 configDir = '../'
 weightDir = 'training/' + era + '/final' + '_' + ch + '_' +jetcat + '_'
 scoreDir = 'scores/' + era + '/' + ch + '_' +jetcat + '_'
@@ -73,7 +76,7 @@ else: scaleST=1.0; scaleTT=1.0; scaleTTLJ=1.0; scaleTTLL=1.0; frac_sig=1.0; frac
 import tensorflow as tf
 from keras.backend.tensorflow_backend import set_session
 config = tf.ConfigProto()
-config.gpu_options.per_process_gpu_memory_fraction = 0.1
+config.gpu_options.per_process_gpu_memory_fraction = 0.05
 set_session(tf.Session(config=config))
 
 import keras
@@ -140,8 +143,15 @@ def correlations(data, name, **kwds):
         # shift location of ticks to center of the bins
         ax.set_xticks(np.arange(len(labels))+0.5, minor=False)
         ax.set_yticks(np.arange(len(labels))+0.5, minor=False)
-        ax.set_xticklabels(labels, minor=False, ha='right', rotation=90)
-        ax.set_yticklabels(labels, minor=False)
+        if len(labels) < 50:
+          ax.set_xticklabels(labels, minor=False, ha='right', rotation=90)
+          ax.set_yticklabels(labels, minor=False)
+        elif len(labels) >= 50 and len(labels) < 100:
+          ax.set_xticklabels(labels, minor=False, ha='right', rotation=90, fontsize=4)
+          ax.set_yticklabels(labels, minor=False, fontsize=4)
+        else:
+          ax.set_xticklabels(labels, minor=False, ha='right', rotation=90, fontsize=2)
+          ax.set_yticklabels(labels, minor=False, fontsize=2)
 
     plt.tight_layout()
     #plt.show()
@@ -339,7 +349,7 @@ class roc_callback(Callback):
 nST, nTT = (0,0)
 #Signal first
 for files in sig_files:
-  data_temp = pd.read_hdf('../mkNtuple/' + era + '/hdf_/' + files)
+  data_temp = pd.read_hdf(rootDir + files)
   if njets_cut == 3:
     data_temp = data_temp[data_temp['njets'] ==  njets_cut]
   elif njets_cut == 4:
@@ -372,7 +382,7 @@ frac_list = [(nST * scaleST)/(nST * scaleST + nTT * scaleTT), (nTT * scaleTT)/(n
 
 #Next, background
 for files in bkg_files:
-  data_temp = pd.read_hdf('../mkNtuple/' + era + '/hdf_/' + files)
+  data_temp = pd.read_hdf(rootDir + files)
   if njets_cut == 3:
     data_temp = data_temp[data_temp['njets'] ==  njets_cut]
   elif njets_cut == 4:
